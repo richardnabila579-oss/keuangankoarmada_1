@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LMS Penganggaran · Keuangan Koarmada I</title>
+<link rel="icon" type="image/png" href="media/favicon.png">
+<script>try{var m=localStorage.getItem("garangan-mode");if(m)document.documentElement.dataset.theme=m==="light"?"light":"dark"}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: tegas, rapi, seperti buku panduan latihan satuan; tenang tetapi berwibawa.
+   IDEA: peta haluan pelayaran: enam sesi adalah enam titik singgah dalam satu siklus anggaran.
+   PICTURE: animasi siklus anggaran dengan penanda kapal yang berlayar dari tahap ke tahap.
+   COLOUR and TYPE: biru laut tua dominan, putih kertas peta, merah bendera sebagai aksen; Barlow Condensed + Barlow.
+   LAYOUT: pita kepala biru penuh, animasi besar di layar pertama, kartu sesi seperti log pelayaran di bawahnya. */
+:root{color-scheme:light dark;
+--bg:light-dark(#f4f6f9,#0a1522);--paper:light-dark(#ffffff,#111f30);--ink:light-dark(#0f1b2b,#e8eef6);--quiet:light-dark(#53627a,#9db0c7);
+--navy:#0d2a4a;--navy2:light-dark(#163d66,#1d4a78);--sea:light-dark(#2f6f9f,#6aa8d8);--red:light-dark(#c8102e,#ff5a6e);--line:light-dark(#d8dfe8,#24384f);
+--ok:light-dark(#1d7a46,#5fd18f);--warn:light-dark(#9a5b00,#f2b450);--tint:light-dark(#e9f0f7,#16283d)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Barlow Condensed",Barlow,sans-serif;line-height:1.05;text-wrap:balance;margin:0 0 .4em}
+h1{font-size:clamp(32px,5vw,50px)}h2{font-size:clamp(26px,3.4vw,36px)}h3{font-size:22px}
+a{color:var(--sea)}
+.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5}
+.top .in{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;padding:10px max(5vw,16px);max-width:1320px;margin:auto}
+.brand{font-family:"Barlow Condensed",system-ui,sans-serif;font-weight:700;font-size:21px;letter-spacing:.2px;margin-right:auto;color:#fff;text-decoration:none}
+.brand small{display:block;font:500 12px Barlow,system-ui,sans-serif;opacity:.75}
+nav.scroll{display:flex;gap:4px;overflow-x:auto;max-width:100%}
+nav a{color:#dbe7f5;text-decoration:none;padding:10px 12px;border-radius:8px;font-weight:600;font-size:14px;white-space:nowrap;min-height:44px;display:flex;align-items:center}
+nav a:hover{background:#ffffff1a}nav a.on{background:#fff;color:var(--navy)}
+.chip{font-size:12px;padding:4px 10px;border-radius:99px;background:#ffffff22;color:#fff;white-space:nowrap}
+.band{padding:clamp(28px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:auto}
+.hero{background:var(--navy);color:#fff;padding-top:clamp(20px,3vw,36px)}
+.hero p.lead{color:#c9d8ea;max-width:62ch;font-size:17px}
+.heroGrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:center}
+.fig{position:relative;aspect-ratio:16/10;background:linear-gradient(#103459,#0b2443);border-radius:16px;border:1px solid #ffffff1f}
+.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.cap{background:#ffffff12;border:1px solid #ffffff22;border-radius:14px;padding:20px}
+.cap .k{font-size:13px;color:#9fc0e3}.cap h3{font-size:28px;margin:.2em 0 .3em}
+.cap dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;margin:12px 0 16px}.cap dt{color:#9fc0e3;font-size:14px}.cap dd{margin:0}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{font:600 15px Barlow,system-ui,sans-serif;min-height:44px;padding:0 18px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+button.pri,.btn.pri{background:var(--red);border-color:var(--red);color:#fff}
+.hero button{background:#ffffff14;border-color:#ffffff40;color:#fff}.hero button.pri{background:var(--red);border-color:var(--red)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #6aa8d8;outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:20px}
+.muted{color:var(--quiet)}.small{font-size:14px}
+label{display:block;font-weight:600;font-size:14px;margin:10px 0 4px}
+input,select{font:16px Barlow,system-ui,sans-serif;width:100%;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.route{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:14px}
+.leg{display:block;text-decoration:none;color:inherit;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px;position:relative}
+.leg:hover{border-color:var(--sea)}.leg .n{font:700 34px "Barlow Condensed";color:var(--sea)}.leg b{display:block;font-size:17px;line-height:1.25}
+.st{display:inline-block;margin-top:8px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--tint);color:var(--quiet)}
+.st.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}.st.no{background:color-mix(in srgb,var(--red) 13%,transparent);color:var(--red)}
+.bar{height:10px;border-radius:99px;background:var(--tint);overflow:hidden}.bar i{display:block;height:100%;background:var(--sea);border-radius:99px;transition:width .6s}
+.sesHead{background:var(--navy);color:#fff}.sesHead .muted{color:#b9cbe0}
+.pts{padding-left:1.2em}.pts li{margin:6px 0}
+.flow{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.step{flex:1 1 150px;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--paper);transition:all .35s;position:relative}
+.step .w{font-size:13px;color:var(--quiet)}.step b{display:block;font-size:16px}
+.step.on{border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 22%,transparent);transform:translateY(-3px)}
+.step.done{border-color:var(--sea)}
+fieldset{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:0 0 14px;background:var(--paper)}
+legend{font-weight:600;padding:0 6px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px;border-radius:8px;cursor:pointer;font-weight:400;font-size:16px;margin:2px 0}
+.opt input{width:20px;min-height:20px;margin-top:3px;flex:none}.opt:hover{background:var(--tint)}
+.opt.right{background:color-mix(in srgb,var(--ok) 14%,transparent)}.opt.wrong{background:color-mix(in srgb,var(--red) 12%,transparent)}
+.expl{font-size:14px;color:var(--quiet);margin:6px 8px 0}
+.score{font:700 44px "Barlow Condensed"}
+table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:13px;color:var(--quiet);font-weight:600}td.num,th.num{text-align:right;white-space:nowrap}
+.order li{display:flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:6px 8px 6px 14px;margin:6px 0}
+.order li span{flex:1}.order button{min-height:40px;padding:0 12px}
+.order{list-style:none;padding:0;counter-reset:o}.order li::before{counter-increment:o;content:counter(o);font:700 20px "Barlow Condensed";color:var(--sea);width:20px}
+.note{background:var(--tint);border-radius:12px;padding:12px 16px;font-size:15px}
+.req li{margin:6px 0;list-style:none}.req{padding:0}
+.req li::before{content:"✕";color:var(--red);font-weight:700;margin-right:8px}.req li.ok::before{content:"✓";color:var(--ok)}
+.cert img{width:100%;border-radius:10px;border:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}.stats .card b{font:700 40px "Barlow Condensed";display:block}
+.hbars div{display:grid;grid-template-columns:70px minmax(0,1fr) 44px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+pre,.scroll{overflow-x:auto}
+footer{padding:24px max(5vw,16px);color:var(--quiet);font-size:13px;text-align:center}
+@media(max-width:860px){.heroGrid,.grid2{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--quiet)}.stack td:empty{display:none}.brand small{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.scroll>a{flex-shrink:0}.blogo{height:38px;width:auto;float:left;margin:2px 10px 0 0}.sx{display:flex;gap:6px;flex-wrap:wrap}.sx a{font:600 14px Barlow,sans-serif;color:#fff;text-decoration:none;padding:8px 14px;border-radius:99px;border:2px solid #ffffff66;min-height:40px;display:inline-flex;align-items:center}.sx a:hover,.sx a[aria-current]{background:#fff;color:#0d2a4a;border-color:#fff}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header class="top"><div class="in">
+<a class="brand" href="#beranda"><img src="media/logo.png" alt="" class="blogo">LMS Penganggaran Koarmada I<small>Pelatihan personel baru pengelola keuangan</small></a>
+<nav class="scroll" id="nav"></nav>
+<nav class="sx" aria-label="Halaman"><a href="index.html">Website</a><a href="modul.html">Modul</a><a href="lms.html" aria-current="page">LMS</a></nav>
+<span class="chip" id="sync">Tersimpan di perangkat ini</span>
+</div></header>
+<main id="app"></main>
+<footer>Materi mengacu pada karya tulis <i>Alur Penganggaran Koarmada I</i> dan <a href="modul.html">Modul Pelatihan Penganggaran Koarmada I</a>. Nomor peraturan dan batas waktu mengikuti ketentuan terbaru.</footer>
+
+<script>
+{
+const MODUL='modul.html';
+const STAGES=[
+{t:'Perencanaan',w:'T-2 s.d. T-1',p:'Asrena, satuan pelaksana',d:'Usulan kebutuhan, KAK/TOR, RAB'},
+{t:'RKA dan DIPA',w:'T-1',p:'Asrena, KPA',d:'RKA, DIPA Petikan, POK'},
+{t:'Pelaksanaan',w:'Tahun T',p:'PPK, PPSPM, KPPN',d:'Kontrak, SPP, SPM, SP2D'},
+{t:'Penatausahaan',w:'Setiap bulan',p:'Bendahara Pengeluaran',d:'BKU, setoran pajak, LPJ'},
+{t:'Rekonsiliasi',w:'Setiap bulan',p:'Akuntansi Mako & Satkor, KPPN',d:'Hasil rekonsiliasi KPPN'},
+{t:'Laporan dan pengawasan',w:'T+1',p:'Kakuwil, KPA, Inspektorat, BPK',d:'LRA, Neraca, LO, LPE, CaLK'}];
+const FLOW_BAYAR=[{b:'Perikatan',w:'PPK',d:'Kontrak/SPK; data kontrak ke KPPN maks. 5 hari kerja'},{b:'Pemeriksaan & BAST',w:'PPK, penyedia',d:'Barang/jasa diterima sesuai kontrak'},{b:'SPP',w:'PPK',d:'Tagihan diuji, SPP diterbitkan'},{b:'SPM',w:'PPSPM',d:'Uji pagu, akun, kelengkapan'},{b:'SP2D',w:'KPPN',d:'Uang keluar dari Kas Negara'}];
+const FLOW_REKON=[{b:'Rekam transaksi',w:'Operator SAKTI',d:'Semua modul, setiap hari'},{b:'Cek kualitas data',w:'Akuntansi Mako/Satkor',d:'Akun tidak lazim, saldo tidak normal'},{b:'Rekon internal',w:'UAKPA, UAKPB',d:'Kas, aset, persediaan, SP2D'},{b:'Rekon eksternal',w:'KPPN via MonSAKTI',d:'Selesaikan semua TDK'},{b:'Laporan keuangan',w:'Kuwil Koarmada I',d:'Dihimpun, diverifikasi, direviu'}];
+const SES=[
+{n:1,t:'Dasar keuangan negara dan organisasi pengelola keuangan',jp:2,anim:'siklus',sim:'cocok',pts:['Siklus anggaran berjalan dari T-2 (perencanaan) sampai T+1 (laporan diaudit); pada satu waktu Koarmada I mengerjakan tiga tahun anggaran.','Kakuwil Koarmada I memimpin Keuangan Wilayah Koarmada I, yang membawahi Akuntansi Mako Koarmada I dan Akuntansi Satkor Koarmada I.','Pejabat perbendaharaan: KPA, PPK (perikatan dan SPP), PPSPM (SPM), dan Bendahara Pengeluaran (memegang uang).','PPK tidak boleh merangkap PPSPM, dan keduanya tidak boleh merangkap Bendahara.','Setiap mutasi pejabat wajib diikuti SK baru, pembaruan data SAKTI dan KPPN, serta serah terima.'],
+q:[['Pejabat yang menguji SPP dan menerbitkan SPM adalah …',['PPK','PPSPM','Bendahara','Kakuwil'],1,'PPSPM menguji SPP lalu menerbitkan SPM; PPK menerbitkan SPP.'],
+['Rangkap jabatan yang dilarang adalah …',['PPK merangkap PPSPM','Operator SAKTI membantu dua pejabat','KPA menetapkan SK pejabat','Kakuwil membina unit akuntansi'],0,'Pemisahan PPK dan PPSPM adalah inti pengendalian intern.'],
+['Kuwil Koarmada I membawahi …',['Asrena dan Inspektorat','Akuntansi Mako dan Akuntansi Satkor','KPPN dan Kanwil DJPb','PPK dan PPSPM'],1,'Dua unit akuntansi di bawah Kuwil: Akuntansi Mako dan Akuntansi Satkor Koarmada I.'],
+['Pejabat yang memegang uang negara secara fisik adalah …',['KPA','PPK','Bendahara Pengeluaran','Operator SAKTI'],2,'Bendahara bertanggung jawab pribadi atas selisih kas.'],
+['Setiap pergantian pejabat perbendaharaan wajib diikuti …',['Cukup pemberitahuan lisan','SK baru, pembaruan data SAKTI dan KPPN, serta serah terima','Penundaan semua pembayaran sampai akhir tahun','Revisi DIPA'],1,'Tanpa SK dan spesimen baru, SPM akan ditolak KPPN.']]},
+{n:2,t:'Perencanaan dan penganggaran sampai DIPA',jp:2,pts:['Urutan: usulan kebutuhan (KAK/TOR, RAB) → pagu indikatif dan Renja → pagu anggaran dan RKA → penelaahan → alokasi anggaran → DIPA.','DIPA Petikan terbit pada Desember T-1 dan menjadi dasar perikatan serta pembayaran mulai 1 Januari T.','Halaman III DIPA memuat rencana penarikan dana (RPD) dan menjadi dasar penilaian deviasi dalam IKPA.','Anggaran dengan catatan blokir (halaman IV) belum dapat dibelanjakan.','Standar Biaya dari Kementerian Keuangan adalah batas atas harga dalam RAB.'],
+q:[['Dokumen yang menjadi dasar perikatan dan pembayaran mulai 1 Januari adalah …',['Renja','RKA pagu indikatif','DIPA','KAK'],2,'DIPA adalah dokumen pelaksanaan anggaran satker.'],
+['Rencana penarikan dana per bulan terdapat pada …',['Halaman I A','Halaman II','Halaman III','Halaman IV'],2,'Halaman III = RPD; deviasinya dinilai dalam IKPA.'],
+['Anggaran yang masih diberi catatan blokir …',['Boleh dibelanjakan asal ada kontrak','Belum dapat dibelanjakan','Otomatis hangus','Dapat dibayar lewat UP'],1,'Blokir harus dibuka melalui revisi sebelum perikatan.'],
+['Batas atas harga yang dipakai dalam RAB adalah …',['Harga penawaran penyedia','Standar Biaya dari Kementerian Keuangan','Harga tahun lalu ditambah 10 persen','Kesepakatan dengan satker lain'],1,'Standar Biaya Masukan dan Keluaran dari Kemenkeu.'],
+['DIPA Petikan diterbitkan pada …',['Januari tahun T','Juli T-1','Desember T-1','Maret T+1'],2,'DIPA diserahkan Desember T-1 agar bisa dipakai sejak 1 Januari.']]},
+{n:3,t:'Pelaksanaan anggaran',jp:2,anim:'bayar',sim:'urut',pts:['Alur pembayaran: perikatan → pemeriksaan dan BAST → SPP (PPK) → SPM (PPSPM) → SP2D (KPPN).','Data kontrak didaftarkan ke KPPN paling lambat 5 hari kerja setelah kontrak ditandatangani.','LS untuk gaji dan kontrak; UP untuk belanja kecil; GU mengisi kembali UP; TUP untuk kebutuhan mendesak melebihi sisa UP.','Revisi anggaran ditempuh di DJA, Kanwil DJPb, atau tingkat KPA; belanja sebelum revisi disahkan tidak dapat dibayar.'],
+q:[['Urutan alur pembayaran yang benar adalah …',['SPM → SPP → SP2D → BAST','Perikatan → BAST → SPP → SPM → SP2D','SPP → Perikatan → SPM → SP2D','BAST → SPM → SPP → SP2D'],1,'Perikatan dulu, uang keluar terakhir saat SP2D.'],
+['Data kontrak didaftarkan ke KPPN paling lambat …',['1 hari kerja','5 hari kerja','14 hari kalender','Akhir bulan'],1,'Keterlambatan membuat SPM LS ditolak dan menurunkan IKPA.'],
+['Pembayaran gaji menggunakan mekanisme …',['UP','GU','TUP','LS'],3,'Gaji dibayar LS langsung ke rekening pegawai.'],
+['Uang negara keluar dari Kas Negara pada saat …',['Kontrak ditandatangani','SPP terbit','SPM terbit','SP2D terbit'],3,'SP2D adalah perintah pencairan dari KPPN.'],
+['Kebutuhan mendesak yang melebihi sisa UP dibiayai dengan …',['GU','TUP','LS bendahara','Revisi DIPA'],1,'TUP harus dipertanggungjawabkan dalam batas waktu singkat.']]},
+{n:4,t:'Penatausahaan bendahara dan perpajakan',jp:2,pts:['Catat setiap transaksi di BKU modul bendahara SAKTI pada hari yang sama, didukung buku pembantu dan bukti sah.','PPh 21 untuk pembayaran kepada orang pribadi, PPh 22 pembelian barang, PPh 23 jasa, PPh 4 ayat (2) final, serta PPN.','Pajak dipungut saat pembayaran dan disetor dengan kode billing.','LPJ Bendahara ke KPPN paling lambat tanggal 10 bulan berikutnya; KPA memeriksa kas sekurang-kurangnya sekali dalam tiga bulan.'],
+q:[['LPJ Bendahara disampaikan ke KPPN paling lambat …',['Tanggal 5','Tanggal 10 bulan berikutnya','Tanggal 25','Akhir triwulan'],1,'LPJ bulanan paling lambat tanggal 10.'],
+['KPA memeriksa kas bendahara sekurang-kurangnya …',['Setiap minggu','Sekali dalam tiga bulan','Sekali setahun','Hanya saat audit'],1,'Hasilnya dituangkan dalam Berita Acara Pemeriksaan Kas.'],
+['Honor narasumber kepada orang pribadi dipotong …',['PPh 21','PPh 22','PPh 23','PPN'],0,'PPh 21 untuk penghasilan orang pribadi.'],
+['Jasa servis kendaraan oleh badan usaha dipotong …',['PPh 21','PPh 22','PPh 23','PPh 25'],2,'PPh 23 untuk jasa.'],
+['Pajak yang dipungut bendahara disetor menggunakan …',['Transfer biasa tanpa kode','Kode billing','Kuitansi bendahara','SPM LS'],1,'Setoran pajak memakai kode billing sesuai sistem DJP.']]},
+{n:5,t:'Akuntansi, rekonsiliasi, dan laporan keuangan',jp:2,anim:'rekon',sim:'rekon',pts:['Transaksi di modul Komitmen, Pembayaran, Bendahara, Persediaan, dan Aset Tetap otomatis membentuk jurnal di modul GLP.','Akuntansi Mako dan Akuntansi Satkor menyusun laporan satuan; Kuwil Koarmada I menghimpun dan memverifikasinya.','Rekonsiliasi internal: kas, aset, persediaan, dan SP2D. Rekonsiliasi eksternal: setiap bulan dengan KPPN melalui MonSAKTI.','Selisih muncul sebagai Transaksi Dalam Konfirmasi (TDK) dan wajib diselesaikan.','Laporan keuangan: LRA, Neraca, LO, LPE, CaLK, dilengkapi Laporan BMN dan Pernyataan Tanggung Jawab.'],
+q:[['Rekonsiliasi eksternal bulanan dilakukan dengan …',['Inspektorat melalui surat','KPPN melalui MonSAKTI','BPK melalui e-audit','Bank melalui rekening koran'],1,'Data satker dibandingkan dengan data Kuasa BUN.'],
+['Transaksi Dalam Konfirmasi (TDK) menunjukkan …',['Transaksi yang sudah final','Selisih pencatatan antara data satker dan Kuasa BUN','Transaksi menunggu tanda tangan KPA','Belanja yang diblokir'],1,'TDK wajib ditindaklanjuti sampai cocok.'],
+['Modul SAKTI tempat jurnal terbentuk otomatis adalah …',['Komitmen','Bendahara','GLP','Penganggaran'],2,'General Ledger dan Pelaporan.'],
+['Yang bukan komponen laporan keuangan satker dalam modul ini adalah …',['LRA','Neraca','Laporan Operasional','Laporan Kinerja Harian'],3,'Komponennya LRA, Neraca, LO, LPE, CaLK.'],
+['Yang menghimpun dan memverifikasi laporan Akuntansi Mako dan Akuntansi Satkor adalah …',['KPPN','Kuwil Koarmada I','Asrena','Operator SAKTI'],1,'Kuwil Koarmada I di bawah pimpinan Kakuwil.']]},
+{n:6,t:'Pengawasan, IKPA, dan tindak lanjut temuan',jp:2,pts:['Lapisan pengawasan: pengendalian melekat, SPIP, aparat pengawasan intern (Inspektorat Koarmada I, Itjenal, Itjen TNI, Itjen Kemhan), dan BPK.','Reviu laporan keuangan memberikan keyakinan terbatas; temuan diperbaiki sebelum laporan dikirim.','IKPA menilai kualitas perencanaan, pelaksanaan, dan hasil; setiap jabatan ikut menentukan nilainya.','Temuan berulang dicegah dengan memperbaiki sistem dan prosedur, bukan hanya menyetor sanksi.'],
+q:[['Pemeriksa eksternal yang memberikan opini atas laporan keuangan adalah …',['Inspektorat Koarmada I','Itjen Kemhan','BPK','KPPN'],2,'BPK memberikan opini, misalnya WTP.'],
+['Deviasi halaman III DIPA paling dipengaruhi oleh …',['Asrena dan KPA melalui RPD','Bendahara melalui BKU','Operator SAKTI melalui GLP','BPK melalui opini'],0,'RPD yang realistis menekan deviasi.'],
+['Reviu laporan keuangan oleh aparat pengawasan intern memberikan …',['Opini WTP','Keyakinan terbatas','Jaminan mutlak','Persetujuan anggaran'],1,'Reviu bukan audit; keyakinannya terbatas.'],
+['Cara paling efektif mencegah temuan berulang adalah …',['Menunggu pemeriksaan berikutnya','Mengganti pejabat','Menyetor sanksi saja','Memperbaiki sistem dan prosedur kerja'],3,'Atasi akar masalahnya.'],
+['Aspek IKPA penyelesaian tagihan paling dipengaruhi oleh …',['Bendahara dan BPK','PPK dan PPSPM','Inspektorat','Asrena'],1,'Tagihan diuji PPK dan PPSPM.']]}];
+
+const COCOK=[['Membuat perikatan dan menguji tagihan','PPK'],['Menguji SPP dan menerbitkan SPM','PPSPM'],['Menyimpan uang dan menyusun LPJ bulanan','Bendahara Pengeluaran'],['Menetapkan SK pejabat perbendaharaan','KPA'],['Menghimpun dan memverifikasi laporan keuangan satuan','Kakuwil Koarmada I'],['Mengoordinasikan RKA dan usulan revisi','Asrena']];
+const URUT=['Perikatan (kontrak/SPK)','Pemeriksaan dan BAST','SPP oleh PPK','SPM oleh PPSPM','SP2D oleh KPPN'];
+const MEK=[['Pembayaran gaji dan tunjangan bulanan','LS'],['Pembelian ATK untuk rapat kecil','UP'],['Mengisi kembali UP yang sudah terpakai','GU'],['Operasi SAR mendadak, dana melebihi sisa UP','TUP'],['Kontrak docking KRI Rp4 miliar','LS']];
+const REKON=[['Belanja pegawai',2310.0,2310.0,'Tidak ada selisih'],['Belanja barang',845.0,870.0,'SP2D belum direkam/disetujui di SAKTI'],['Belanja pemeliharaan',412.0,392.0,'Salah akun pada SPM'],['Belanja modal',1180.0,1200.0,'Salah akun pada SPM'],['Setoran pajak',41.0,43.5,'Bukti setor pajak belum direkam']];
+const SEBAB=['Tidak ada selisih','SP2D belum direkam/disetujui di SAKTI','Salah akun pada SPM','Bukti setor pajak belum direkam'];
+const SIMS={cocok:'Mencocokkan pejabat dan tugas',urut:'Alur pembayaran dan mekanisme',rekon:'Menyelesaikan selisih rekonsiliasi'};
+
+const DLF={save:async({filename,data})=>{const b=data instanceof Blob?data:new Blob([data],{type:'text/csv;charset=utf-8'});const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}};
+const use=n=>{try{return Promise.resolve(window.claude?.use?.(n)??null).catch(()=>null).then(v=>v??(n==='downloads'?DLF:null))}catch(e){return Promise.resolve(n==='downloads'?DLF:null)}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=s=>document.querySelector(s);
+const fmt=n=>n.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1});
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const KEY='lms-koarmada1-v1';
+let S={profil:{nama:'',nrp:'',satuan:''},kuis:{},sim:{},akhir:null};
+try{const x=JSON.parse(localStorage.getItem(KEY));if(x)S=Object.assign(S,x)}catch(e){}
+let db=null,user=null,uid=null,canWrite=false,isInstr=false,writing=false,pending=false,saveT=null;
+const best=(a,b)=>Math.max(a||0,b||0);
+function merge(r){if(!r)return;S.profil.nama||=r.profil?.nama||'';S.profil.nrp||=r.profil?.nrp||'';S.profil.satuan||=r.profil?.satuan||'';
+for(const k in r.kuis||{})S.kuis[k]=best(S.kuis[k],r.kuis[k]);for(const k in r.sim||{})S.sim[k]=best(S.sim[k],r.sim[k]);if(r.akhir!=null)S.akhir=best(S.akhir,r.akhir)}
+function setSync(t){$('#sync').textContent=t}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+if(!(db&&uid&&canWrite))return;clearTimeout(saveT);saveT=setTimeout(push,800)}
+async function push(){if(writing){pending=true;return}writing=true;setSync('Menyimpan…');
+try{await db.doc('progress/'+uid).set({uid,profil:S.profil,kuis:S.kuis,sim:S.sim,akhir:S.akhir,rata:avg(),lulus:certOK().ok,updatedAt:Date.now()});setSync('Tersimpan & tersinkron')}
+catch(e){if(e&&e.code==='invalid_argument'){canWrite=false;setSync('Tersimpan di perangkat ini')}else setSync('Gagal sinkron, tersimpan lokal')}
+writing=false;if(pending){pending=false;push()}}
+
+function avg(){const v=[1,2,3,4,5,6].map(n=>S.kuis[n]||0);v.push(S.akhir||0);return Math.round(v.reduce((a,b)=>a+b,0)/v.length)}
+function certOK(){const r=[
+{t:'Isi nama, pangkat/NRP, dan satuan di Beranda',ok:!!(S.profil.nama&&S.profil.nrp&&S.profil.satuan)},
+{t:'Lulus kuis keenam sesi (nilai ≥ 70)',ok:[1,2,3,4,5,6].every(n=>(S.kuis[n]||0)>=70)},
+{t:'Menyelesaikan tiga simulasi kasus (nilai ≥ 70)',ok:Object.keys(SIMS).every(k=>(S.sim[k]||0)>=70)},
+{t:'Lulus evaluasi akhir (nilai ≥ 70)',ok:(S.akhir||0)>=70},
+{t:'Rata-rata kuis sesi dan evaluasi akhir ≥ 75 (saat ini '+avg()+')',ok:avg()>=75}];return{r,ok:r.every(x=>x.ok)}}
+
+let timers=[];const clearTimers=()=>{timers.forEach(t=>{clearInterval(t);cancelAnimationFrame(t)});timers=[]};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function nav(){const h=location.hash.slice(1)||'beranda';const items=[['beranda','Beranda'],...SES.map(s=>['sesi-'+s.n,'Sesi '+s.n]),['evaluasi','Evaluasi'],['sertifikat','Sertifikat']];if(isInstr)items.push(['instruktur','Instruktur']);
+$('#nav').innerHTML=items.map(([k,l])=>`<a href="#${k}" class="${h===k?'on':''}">${l}</a>`).join('')}
+function status(n){const v=S.kuis[n];return v==null?'<span class="st">Belum dikerjakan</span>':v>=70?`<span class="st ok">Lulus · ${v}</span>`:`<span class="st no">Belum lulus · ${v}</span>`}
+
+/* ---------- Animasi siklus ---------- */
+function siklusHTML(){return `<div class="heroGrid"><div class="fig" id="fig"><svg id="cyc" viewBox="0 0 640 400" role="img" aria-label="Animasi siklus anggaran enam tahap"></svg></div>
+<div class="cap" aria-live="polite"><div class="k" id="capK"></div><h3 id="capT"></h3><dl><dt>Waktu</dt><dd id="capW"></dd><dt>Pelaksana</dt><dd id="capP"></dd><dt>Dokumen</dt><dd id="capD"></dd></dl>
+<div class="ctrl"><button data-act="cprev" aria-label="Tahap sebelumnya">◀ Sebelumnya</button><button class="pri" data-act="cplay" id="cplay">Jeda</button><button data-act="cnext" aria-label="Tahap berikutnya">Berikutnya ▶</button></div></div></div>`}
+const CX=320,CY=205,RX=190,RY=135,ang=i=>-Math.PI/2+i*Math.PI/3;
+const pos=a=>[CX+RX*Math.cos(a),CY+RY*Math.sin(a)];
+const SHORT=['Perencanaan','RKA & DIPA','Pelaksanaan','Penatausahaan','Rekonsiliasi','Laporan'];
+let cyc={i:0,a:ang(0),play:!reduce,hold:0};
+function drawCyc(){const s=$('#cyc');if(!s)return;const [sx,sy]=pos(cyc.a);let o=`<defs><radialGradient id="glow"><stop offset="0" stop-color="#ff5a6e" stop-opacity=".55"/><stop offset="1" stop-color="#ff5a6e" stop-opacity="0"/></radialGradient></defs>`;
+o+=`<ellipse cx="${CX}" cy="${CY}" rx="${RX}" ry="${RY}" fill="none" stroke="#6aa8d8" stroke-opacity=".35" stroke-width="2" stroke-dasharray="6 8"/>`;
+for(let k=1;k<5;k++)o+=`<path d="M${40+k*30} ${360+k*6} q40 -10 80 0 t80 0 t80 0" fill="none" stroke="#ffffff" stroke-opacity=".05" stroke-width="2"/>`;
+o+=`<text x="${CX}" y="${CY-8}" text-anchor="middle" fill="#fff" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="30">Siklus Anggaran</text><text x="${CX}" y="${CY+20}" text-anchor="middle" fill="#9fc0e3" font-size="15" font-family="Barlow,system-ui,sans-serif">Koarmada I · T-2 sampai T+1</text>`;
+STAGES.forEach((g,i)=>{const [x,y]=pos(ang(i)),on=i===cyc.i,lx=x+(Math.cos(ang(i))>.2?38:Math.cos(ang(i))<-.2?-38:0),ly=y+(Math.abs(Math.cos(ang(i)))<=.2?(Math.sin(ang(i))<0?-38:48):6),an=Math.cos(ang(i))>.2?'start':Math.cos(ang(i))<-.2?'end':'middle';
+o+=`<g data-act="cgo" data-i="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="26" fill="${on?'#c8102e':'#0d2a4a'}" stroke="${on?'#ff8a98':'#6aa8d8'}" stroke-width="2"/><text x="${x}" y="${y+8}" text-anchor="middle" fill="#fff" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="700" font-size="24">${i+1}</text>
+<text x="${lx}" y="${ly}" text-anchor="${an}" fill="${on?'#fff':'#c9d8ea'}" font-family="Barlow,system-ui,sans-serif" font-weight="${on?600:500}" font-size="17">${SHORT[i]}</text></g>`});
+o+=`<circle cx="${sx}" cy="${sy}" r="40" fill="url(#glow)"/><g transform="translate(${sx},${sy})"><path d="M-14 4 L14 4 L9 12 L-9 12 Z" fill="#fff"/><path d="M-2 4 V-14 L10 2 Z" fill="#ffd9de"/></g>`;s.innerHTML=o;
+const g=STAGES[cyc.i];$('#capK').textContent='Tahap '+(cyc.i+1)+' dari 6';$('#capT').textContent=g.t;$('#capW').textContent=g.w;$('#capP').textContent=g.p;$('#capD').textContent=g.d;$('#cplay').textContent=cyc.play?'Jeda':'Putar'}
+function goCyc(i){const from=cyc.a;let to=ang(i);if(i===0&&cyc.i===5)to=ang(6);if(i<cyc.i&&!(i===0&&cyc.i===5))to=ang(i);cyc.i=i;
+if(reduce){cyc.a=ang(i);drawCyc();return}const t0=performance.now(),dur=1100;const step=t=>{const p=Math.min(1,(t-t0)/dur),e=p<.5?2*p*p:1-(-2*p+2)**2/2;cyc.a=from+(to-from)*e;drawCyc();if(p<1)timers.push(requestAnimationFrame(step));else{cyc.a=ang(i)}};timers.push(requestAnimationFrame(step))}
+function startCyc(){drawCyc();timers.push(setInterval(()=>{if(cyc.play)goCyc((cyc.i+1)%6)},4200))}
+
+/* ---------- Animasi alur ---------- */
+function flowHTML(id,steps,title){return `<div class="card"><h3>${title}</h3><div class="flow" id="${id}">${steps.map((s,i)=>`<div class="step" data-i="${i}"><div class="w">${i+1} · ${s.w}</div><b>${s.b}</b><div class="small muted">${s.d}</div></div>`).join('')}</div>
+<div class="bar"><i id="${id}-bar" style="width:0"></i></div><div class="ctrl" style="margin-top:12px"><button data-act="fplay" data-f="${id}">Jeda</button><button data-act="freset" data-f="${id}">Ulangi</button></div></div>`}
+const flows={};
+function startFlow(id,n){flows[id]={i:0,play:!reduce,n};const paint=()=>{const f=flows[id],el=document.getElementById(id);if(!el)return;el.querySelectorAll('.step').forEach((s,k)=>{s.classList.toggle('on',k===f.i);s.classList.toggle('done',k<f.i)});document.getElementById(id+'-bar').style.width=((f.i+1)/n*100)+'%';const b=document.querySelector(`[data-act=fplay][data-f=${id}]`);if(b)b.textContent=f.play?'Jeda':'Putar'};flows[id].paint=paint;paint();
+timers.push(setInterval(()=>{const f=flows[id];if(f.play){f.i=(f.i+1)%n;paint()}},2300))}
+
+/* ---------- Kuis ---------- */
+function quizHTML(id,qs,done){return `<form data-quiz="${id}">${qs.map((q,i)=>`<fieldset><legend>${i+1}. ${esc(q[0])}</legend>${q[1].map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}" required> <span>${esc(o)}</span></label>`).join('')}</fieldset>`).join('')}
+<div class="ctrl"><button class="pri" type="submit">Kirim jawaban</button></div><div id="${id}-res" aria-live="polite"></div></form>`}
+function gradeQuiz(form,qs){let ok=0;qs.forEach((q,i)=>{const sel=form.querySelector(`input[name=q${i}]:checked`),v=sel?+sel.value:-1;if(v===q[2])ok++;
+form.querySelectorAll(`input[name=q${i}]`).forEach(inp=>{const l=inp.closest('.opt');l.classList.toggle('right',+inp.value===q[2]);l.classList.toggle('wrong',+inp.value===v&&v!==q[2])});
+const fs=form.querySelectorAll('fieldset')[i];fs.querySelector('.expl')?.remove();fs.insertAdjacentHTML('beforeend',`<div class="expl">${v===q[2]?'Benar. ':'Kurang tepat. '}${esc(q[3])}</div>`)});return Math.round(ok/qs.length*100)}
+
+/* ---------- Simulasi ---------- */
+let simState={};
+function simHTML(k){
+if(k==='cocok'){const opts=shuffle(COCOK.map(c=>c[1]));return `<div class="card"><h3>Simulasi: ${SIMS.cocok}</h3><p class="muted small">Pilih pejabat yang tepat untuk setiap tugas.</p><table class="stack"><thead><tr><th>Tugas</th><th>Pejabat</th></tr></thead><tbody>${COCOK.map((c,i)=>`<tr><td>${c[0]}</td><td><select data-c="${i}" aria-label="Pejabat untuk ${c[0]}"><option value="">Pilih…</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table>
+<div class="ctrl" style="margin-top:12px"><button class="pri" data-act="simcek" data-k="cocok">Periksa</button></div><div id="sim-cocok" aria-live="polite"></div></div>`}
+if(k==='urut'){simState.urut=simState.urut||shuffle(URUT);return `<div class="card"><h3>Simulasi: ${SIMS.urut}</h3><p class="muted small">Bagian A: susun urutan alur pembayaran dengan tombol naik/turun. Bagian B: pilih mekanisme pembayaran.</p>
+<ol class="order" id="ord">${simState.urut.map((t,i)=>`<li><span>${t}</span><button data-act="up" data-i="${i}" aria-label="Naikkan ${t}">▲</button><button data-act="dn" data-i="${i}" aria-label="Turunkan ${t}">▼</button></li>`).join('')}</ol>
+<table class="stack"><thead><tr><th>Kebutuhan belanja</th><th>Mekanisme</th></tr></thead><tbody>${MEK.map((m,i)=>`<tr><td>${m[0]}</td><td><select data-m="${i}" aria-label="Mekanisme untuk ${m[0]}"><option value="">Pilih…</option>${['LS','UP','GU','TUP'].map(o=>`<option>${o}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table>
+<div class="ctrl" style="margin-top:12px"><button class="pri" data-act="simcek" data-k="urut">Periksa</button></div><div id="sim-urut" aria-live="polite"></div></div>`}
+if(k==='rekon'){return `<div class="card"><h3>Simulasi: ${SIMS.rekon}</h3><p class="muted small">Data rekonsiliasi bulan Mei sebuah satker (dalam juta rupiah, data latihan). Tentukan penyebab setiap baris.</p><div class="scroll"><table><thead><tr><th>Akun</th><th class="num">SAKTI</th><th class="num">KPPN</th><th class="num">Selisih</th><th>Penyebab</th></tr></thead><tbody>
+${REKON.map((r,i)=>`<tr><td>${r[0]}</td><td class="num">${fmt(r[1])}</td><td class="num">${fmt(r[2])}</td><td class="num">${fmt(r[1]-r[2])}</td><td><select data-r="${i}" aria-label="Penyebab ${r[0]}" style="min-width:220px"><option value="">Pilih…</option>${SEBAB.map(o=>`<option>${o}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>
+<p class="small muted">Petunjuk: total belanja pemeliharaan dan modal sama di kedua sisi, tetapi pembagiannya berbeda.</p>
+<div class="ctrl"><button class="pri" data-act="simcek" data-k="rekon">Periksa</button></div><div id="sim-rekon" aria-live="polite"></div></div>`}}
+function simCheck(k){let sc=0,msg='';
+if(k==='cocok'){let ok=0;document.querySelectorAll('[data-c]').forEach(s=>{const r=s.value===COCOK[+s.dataset.c][1];if(r)ok++;s.style.borderColor=s.value?(r?'var(--ok)':'var(--red)'):''});sc=Math.round(ok/COCOK.length*100);msg=`${ok} dari ${COCOK.length} benar.`}
+if(k==='urut'){let a=0;simState.urut.forEach((t,i)=>{if(t===URUT[i])a++});let b=0;document.querySelectorAll('[data-m]').forEach(s=>{const r=s.value===MEK[+s.dataset.m][1];if(r)b++;s.style.borderColor=s.value?(r?'var(--ok)':'var(--red)'):''});sc=a*10+b*10;msg=`Urutan: ${a} dari 5 posisi tepat. Mekanisme: ${b} dari 5 tepat.${a<5?' Ingat: perikatan → BAST → SPP → SPM → SP2D.':''}`}
+if(k==='rekon'){let ok=0;document.querySelectorAll('[data-r]').forEach(s=>{const r=s.value===REKON[+s.dataset.r][3];if(r)ok++;s.style.borderColor=s.value?(r?'var(--ok)':'var(--red)'):''});sc=Math.round(ok/REKON.length*100);msg=`${ok} dari ${REKON.length} benar.${ok<5?' Selisih Rp25 juta pada belanja barang adalah SP2D tanggal 31 Mei yang belum direkam.':' Setelah koreksi, hasil rekonsiliasi KPPN dapat diterbitkan.'}`}
+S.sim[k]=best(S.sim[k],sc);save();document.getElementById('sim-'+k).innerHTML=`<p><span class="score">${sc}</span> <span class="muted">/ 100 · terbaik ${S.sim[k]}</span></p><p>${msg}</p>`}
+
+/* ---------- Views ---------- */
+function vBeranda(){const done=[1,2,3,4,5,6].filter(n=>(S.kuis[n]||0)>=70).length;
+return `<section class="band hero"><div class="wrap"><h1>Pelatihan Penganggaran Koarmada I</h1><p class="lead">Enam sesi untuk memahami alur kerja dari perencanaan sampai laporan keuangan terekonsiliasi, serta tugas setiap pejabat di dalamnya.</p>${siklusHTML()}</div></section>
+<section class="band"><div class="wrap grid2"><div class="card"><h2>Profil peserta</h2><p class="muted small">Dipakai pada sertifikat dan dasbor instruktur.</p>
+<label for="pn">Nama lengkap</label><input id="pn" data-p="nama" value="${esc(S.profil.nama)}" autocomplete="name">
+<label for="pr">Pangkat / NRP</label><input id="pr" data-p="nrp" value="${esc(S.profil.nrp)}">
+<label for="ps">Satuan</label><input id="ps" data-p="satuan" value="${esc(S.profil.satuan)}" list="satlist"><datalist id="satlist"><option>Kuwil Koarmada I</option><option>Akuntansi Mako Koarmada I</option><option>Akuntansi Satkor Koarmada I</option><option>Asrena Koarmada I</option></datalist></div>
+<div class="card"><h2>Progres belajar</h2><p><span class="score">${done}</span> <span class="muted">dari 6 sesi lulus</span></p><div class="bar"><i style="width:${done/6*100}%"></i></div>
+<p class="small muted" style="margin-top:12px">Rata-rata saat ini: <b>${avg()}</b> (kuis sesi + evaluasi akhir). Simulasi selesai: ${Object.keys(SIMS).filter(k=>(S.sim[k]||0)>=70).length} dari 3.</p>
+<p class="small">Modul bacaan lengkap: <a href="${MODUL}">Modul Pelatihan Penganggaran Koarmada I</a></p>${db&&uid&&!canWrite?'<p class="note">Progres Anda hanya tersimpan di perangkat ini. Minta pemilik LMS memberi akses Contributor agar nilai tampil di dasbor instruktur.</p>':''}</div></div>
+<div class="wrap"><h2 style="margin-top:32px">Rute sesi</h2><div class="route">${SES.map(s=>`<a class="leg" href="#sesi-${s.n}"><div class="n">${s.n}</div><b>${s.t}</b><div class="small muted">${s.jp} JP${s.sim?' · simulasi':''}${s.anim?' · animasi':''}</div>${status(s.n)}</a>`).join('')}</div></div></section>`}
+function vSesi(n){const s=SES[n-1];return `<section class="band sesHead"><div class="wrap"><p class="muted">Sesi ${n} dari 6 · ${s.jp} JP</p><h1>${s.t}</h1>${status(n)}</div></section>
+<section class="band"><div class="wrap ${s.anim==='siklus'?'':'grid2'}"><div class="card"><h2>Materi pokok</h2><ul class="pts">${s.pts.map(p=>`<li>${p}</li>`).join('')}</ul><p class="small">Bacaan lengkap, contoh kasus, dan studi kasus ada di <a href="${MODUL}">modul Sesi ${n}</a>.</p></div>
+<div>${s.anim==='siklus'?`<div class="card hero" style="margin-top:24px;border:0"><h3>Animasi siklus anggaran</h3>${siklusHTML()}</div>`:s.anim==='bayar'?flowHTML('fb',FLOW_BAYAR,'Animasi alur pembayaran'):s.anim==='rekon'?flowHTML('fr',FLOW_REKON,'Animasi menuju laporan terekonsiliasi'):`<div class="card"><h3>Ingat posisi sesi ini</h3><p>Sesi ini berada pada tahap <b>${n===2?'1–2: Perencanaan, RKA dan DIPA':n===4?'4: Penatausahaan bulanan':'6: Laporan dan pengawasan'}</b> dalam siklus anggaran. Lihat animasi lengkap di <a href="#beranda">Beranda</a>.</p></div>`}</div></div>
+${s.sim?`<div class="wrap" style="margin-top:24px">${simHTML(s.sim)}</div>`:''}
+<div class="wrap" style="margin-top:24px"><h2>Kuis Sesi ${n}</h2><p class="muted">Lulus dengan nilai minimal 70. Nilai terbaik yang disimpan.</p>${quizHTML('k'+n,s.q)}</div>
+<div class="wrap ctrl" style="margin-top:20px">${n>1?`<a class="btn" href="#sesi-${n-1}" style="display:inline-flex;align-items:center;text-decoration:none">◀ Sesi ${n-1}</a>`:''}${n<6?`<a class="btn pri" href="#sesi-${n+1}" style="display:inline-flex;align-items:center;text-decoration:none">Sesi ${n+1} ▶</a>`:`<a class="btn pri" href="#evaluasi" style="display:inline-flex;align-items:center;text-decoration:none">Evaluasi akhir ▶</a>`}</div></section>`}
+let finalQs=null;
+function vEvaluasi(){const ready=[1,2,3,4,5,6].every(n=>(S.kuis[n]||0)>=70);finalQs=finalQs||SES.flatMap(s=>shuffle(s.q).slice(0,2));
+return `<section class="band sesHead"><div class="wrap"><h1>Evaluasi akhir</h1><p class="muted">12 soal dari keenam sesi. Nilai terbaik: ${S.akhir==null?'belum ada':S.akhir}</p></div></section><section class="band"><div class="wrap">
+${ready?quizHTML('fin',finalQs)+'<div class="ctrl" style="margin-top:10px"><button data-act="newfin">Acak soal baru</button></div>':`<div class="note">Evaluasi akhir terbuka setelah keenam kuis sesi lulus. Sesi yang belum lulus: ${[1,2,3,4,5,6].filter(n=>(S.kuis[n]||0)<70).map(n=>`<a href="#sesi-${n}">Sesi ${n}</a>`).join(', ')}.</div>`}</div></section>`}
+function vSertifikat(){const c=certOK();return `<section class="band sesHead"><div class="wrap"><h1>Sertifikat kelulusan</h1><p class="muted">Sertifikat terbuka setelah semua syarat terpenuhi.</p></div></section><section class="band"><div class="wrap grid2">
+<div class="card"><h2>Syarat</h2><ul class="req">${c.r.map(x=>`<li class="${x.ok?'ok':''}">${x.t}</li>`).join('')}</ul></div>
+<div class="card cert">${c.ok?`<img id="certImg" alt="Sertifikat kelulusan atas nama ${esc(S.profil.nama)}"><div class="ctrl" style="margin-top:12px"><button class="pri" data-act="dl" id="dlBtn">Unduh sertifikat (PNG)</button></div><p class="small muted" id="dlMsg">Tanda tangan pejabat dibubuhkan setelah dicetak.</p>`:'<p class="muted">Lengkapi syarat di samping untuk membuka sertifikat.</p>'}</div></div></section>`}
+function drawCert(){const cv=document.createElement('canvas');cv.width=1600;cv.height=1130;const x=cv.getContext('2d');
+x.fillStyle='#fff';x.fillRect(0,0,1600,1130);x.strokeStyle='#0d2a4a';x.lineWidth=14;x.strokeRect(30,30,1540,1070);x.strokeStyle='#c8102e';x.lineWidth=3;x.strokeRect(58,58,1484,1014);
+x.fillStyle='#0d2a4a';x.fillRect(58,58,1484,150);x.textAlign='center';x.fillStyle='#fff';x.font='700 30px "Barlow Condensed",sans-serif';x.fillText('KOMANDO ARMADA I · KEUANGAN WILAYAH KOARMADA I',800,120);x.font='500 24px Barlow,sans-serif';x.fillText('Pelatihan Penganggaran bagi Personel Baru Pengelola Keuangan',800,165);
+x.fillStyle='#0d2a4a';x.font='700 92px "Barlow Condensed",sans-serif';x.fillText('SERTIFIKAT',800,330);x.fillStyle='#53627a';x.font='400 28px Barlow,sans-serif';x.fillText('diberikan kepada',800,395);
+x.fillStyle='#0f1b2b';x.font='700 66px "Barlow Condensed",sans-serif';x.fillText(S.profil.nama.slice(0,48),800,485);x.fillStyle='#c8102e';x.fillRect(500,510,600,3);
+x.fillStyle='#0f1b2b';x.font='500 28px Barlow,sans-serif';x.fillText(`${S.profil.nrp.slice(0,60)} · ${S.profil.satuan.slice(0,60)}`,800,565);
+x.fillStyle='#53627a';x.font='400 27px Barlow,sans-serif';x.fillText('telah menyelesaikan 6 sesi pelatihan (12 JP), 3 simulasi kasus, dan evaluasi akhir',800,630);x.fillText('tentang alur penganggaran dari perencanaan sampai laporan keuangan terekonsiliasi',800,670);
+x.fillStyle='#0d2a4a';x.font='700 44px "Barlow Condensed",sans-serif';x.fillText(`Nilai rata-rata ${avg()}`,800,750);
+const tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});x.font='400 24px Barlow,sans-serif';x.fillStyle='#53627a';x.fillText(tgl,800,795);
+x.font='600 26px Barlow,sans-serif';x.fillStyle='#0f1b2b';[[440,'Instruktur'],[1160,'Kakuwil Koarmada I']].forEach(([cx,t])=>{x.fillText(t,cx,870);x.strokeStyle='#0f1b2b';x.lineWidth=2;x.beginPath();x.moveTo(cx-180,990);x.lineTo(cx+180,990);x.stroke();x.font='400 20px Barlow,sans-serif';x.fillStyle='#53627a';x.fillText('nama, pangkat, NRP',cx,1020);x.font='600 26px Barlow,sans-serif';x.fillStyle='#0f1b2b'});
+return cv}
+let rows=[],unsub=null,profs={};
+function vInstruktur(){if(!isInstr)return `<section class="band"><div class="wrap note">Halaman ini hanya untuk instruktur (pemilik atau editor LMS).</div></section>`;
+const n=rows.length,lulus=rows.filter(r=>r.lulus).length,per=[1,2,3,4,5,6].map(k=>{const v=rows.map(r=>r.kuis?.[k]).filter(x=>x!=null);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0});
+const low=n?per.indexOf(Math.min(...per))+1:null;
+return `<section class="band sesHead"><div class="wrap"><h1>Dasbor instruktur</h1><p class="muted">${n?`Sesi dengan rata-rata terendah: <b style="color:#fff">Sesi ${low} (${per[low-1]})</b>. Ulas materi ini pada pertemuan berikutnya.`:'Belum ada peserta yang menyimpan progres.'}</p></div></section>
+<section class="band"><div class="wrap"><div class="stats"><div class="card"><span class="muted small">Peserta</span><b>${n}</b></div><div class="card"><span class="muted small">Lulus & bersertifikat</span><b>${lulus}</b></div><div class="card"><span class="muted small">Rata-rata nilai</span><b>${n?Math.round(rows.reduce((a,r)=>a+(r.rata||0),0)/n):0}</b></div></div>
+<div class="grid2" style="margin-top:20px"><div class="card"><h3>Rata-rata kuis per sesi</h3><div class="hbars">${per.map((v,i)=>`<div><span>Sesi ${i+1}</span><div class="bar"><i style="width:${v}%;background:${v<70?'var(--red)':'var(--sea)'}"></i></div><b class="num">${v}</b></div>`).join('')}</div><p class="small muted">Merah: di bawah batas lulus 70.</p></div>
+<div class="card"><h3>Ekspor</h3><p class="muted small">Unduh rekap nilai semua peserta sebagai CSV untuk arsip atau laporan.</p><button class="pri" data-act="csv">Unduh rekap (CSV)</button><p class="small muted" id="csvMsg"></p></div></div>
+<h3 style="margin-top:24px">Daftar peserta</h3><div class="scroll"><table><thead><tr><th>Nama</th><th>Satuan</th>${[1,2,3,4,5,6].map(k=>`<th class="num">S${k}</th>`).join('')}<th class="num">Sim</th><th class="num">Eval</th><th class="num">Rata</th><th>Status</th><th>Terakhir aktif</th></tr></thead><tbody>
+${rows.map(r=>`<tr><td>${esc(r.profil?.nama||profs[r.uid]||'Tanpa nama')}<div class="small muted">${esc(r.profil?.nrp||'')}</div></td><td>${esc(r.profil?.satuan||'')}</td>${[1,2,3,4,5,6].map(k=>{const v=r.kuis?.[k];return `<td class="num" style="color:${v==null?'var(--quiet)':v>=70?'inherit':'var(--red)'}">${v??'–'}</td>`}).join('')}<td class="num">${Object.keys(SIMS).filter(k=>(r.sim?.[k]||0)>=70).length}/3</td><td class="num">${r.akhir??'–'}</td><td class="num">${r.rata??'–'}</td><td>${r.lulus?'<span class="st ok">Lulus</span>':'<span class="st">Proses</span>'}</td><td class="small">${r.updatedAt?new Date(r.updatedAt).toLocaleString('id-ID',{dateStyle:'medium',timeStyle:'short'}):''}</td></tr>`).join('')||'<tr><td colspan="13" class="muted">Belum ada data.</td></tr>'}</tbody></table></div></div></section>`}
+
+function render(){clearTimers();const h=location.hash.slice(1)||'beranda';nav();let html;
+if(h.startsWith('sesi-')&&SES[+h.slice(5)-1])html=vSesi(+h.slice(5));else if(h==='evaluasi')html=vEvaluasi();else if(h==='sertifikat')html=vSertifikat();else if(h==='instruktur')html=vInstruktur();else html=vBeranda();
+$('#app').innerHTML=html;if($('#cyc'))startCyc();if($('#fb'))startFlow('fb',FLOW_BAYAR.length);if($('#fr'))startFlow('fr',FLOW_REKON.length);
+if($('#certImg')){document.fonts.ready.then(()=>{const i=$('#certImg');if(i)i.src=drawCert().toDataURL('image/png')})}window.scrollTo(0,0)}
+
+document.addEventListener('click',async e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act;
+if(a==='cplay'){cyc.play=!cyc.play;drawCyc()}if(a==='cnext'){cyc.play=false;goCyc((cyc.i+1)%6)}if(a==='cprev'){cyc.play=false;goCyc((cyc.i+5)%6)}if(a==='cgo'){cyc.play=false;goCyc(+t.dataset.i)}
+if(a==='fplay'){const f=flows[t.dataset.f];f.play=!f.play;f.paint()}if(a==='freset'){const f=flows[t.dataset.f];f.i=0;f.play=true;f.paint()}
+if(a==='up'||a==='dn'){const i=+t.dataset.i,j=a==='up'?i-1:i+1;if(j<0||j>=URUT.length)return;const u=simState.urut;[u[i],u[j]]=[u[j],u[i]];$('#ord').outerHTML=`<ol class="order" id="ord">${u.map((x,k)=>`<li><span>${x}</span><button data-act="up" data-i="${k}" aria-label="Naikkan ${x}">▲</button><button data-act="dn" data-i="${k}" aria-label="Turunkan ${x}">▼</button></li>`).join('')}</ol>`;document.querySelector(`#ord [data-act=${a}][data-i="${j}"]`)?.focus()}
+if(a==='simcek')simCheck(t.dataset.k);
+if(a==='retry'){const f=t.closest('form');f.reset();f.querySelectorAll('.opt').forEach(o=>o.classList.remove('right','wrong'));f.querySelectorAll('.expl').forEach(x=>x.remove());t.closest('[id$=-res]').innerHTML='';f.scrollIntoView({behavior:reduce?'auto':'smooth'})}
+if(a==='newfin'){finalQs=null;render()}
+if(a==='dl'){const m=$('#dlMsg');const d=await use('downloads');if(!d){m.textContent='Unduhan tidak tersedia di tampilan ini. Tekan lama atau klik kanan gambar untuk menyimpannya.';return}
+drawCert().toBlob(async b=>{try{await d.save({filename:`Sertifikat-Penganggaran-${S.profil.nama.replace(/[^A-Za-z0-9]+/g,'-').slice(0,40)}.png`,data:b});m.textContent='Sertifikat diunduh.'}catch(err){m.textContent=err?.code==='declined'?'Unduhan dibatalkan.':'Unduhan gagal. Tekan lama atau klik kanan gambar untuk menyimpannya.'}},'image/png')}
+if(a==='csv'){const m=$('#csvMsg');const head=['Nama','Pangkat/NRP','Satuan','S1','S2','S3','S4','S5','S6','Sim cocok','Sim urut','Sim rekon','Evaluasi','Rata-rata','Lulus','Terakhir aktif'];
+const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const lines=[head.map(q).join(',')].concat(rows.map(r=>[r.profil?.nama||profs[r.uid]||'',r.profil?.nrp,r.profil?.satuan,...[1,2,3,4,5,6].map(k=>r.kuis?.[k]),r.sim?.cocok,r.sim?.urut,r.sim?.rekon,r.akhir,r.rata,r.lulus?'Ya':'Tidak',r.updatedAt?new Date(r.updatedAt).toISOString():''].map(q).join(',')));
+const d=await use('downloads');if(!d){m.textContent='Unduhan tidak tersedia di tampilan ini.';return}try{await d.save({filename:'Rekap-Nilai-LMS-Penganggaran-Koarmada-I.csv',data:'﻿'+lines.join('\n')});m.textContent='Rekap diunduh.'}catch(err){m.textContent=err?.code==='declined'?'Unduhan dibatalkan.':'Unduhan gagal.'}}});
+
+document.addEventListener('submit',e=>{const f=e.target.closest('[data-quiz]');if(!f)return;e.preventDefault();const id=f.dataset.quiz;
+const qs=id==='fin'?finalQs:SES[+id.slice(1)-1].q;const sc=gradeQuiz(f,qs);
+if(id==='fin')S.akhir=best(S.akhir,sc);else S.kuis[+id.slice(1)]=best(S.kuis[+id.slice(1)],sc);save();
+const top=id==='fin'?S.akhir:S.kuis[+id.slice(1)];document.getElementById(id+'-res').innerHTML=`<div class="card" style="margin-top:14px"><p><span class="score" style="color:${sc>=70?'var(--ok)':'var(--red)'}">${sc}</span> <span class="muted">/ 100 · nilai terbaik ${top}</span></p><p>${sc>=70?'Lulus. Lanjutkan ke tahap berikutnya.':'Belum lulus. Pelajari pembahasan di atas, lalu coba lagi.'}</p><button type="button" data-act="retry">Coba lagi</button></div>`;
+nav()});
+document.addEventListener('input',e=>{const p=e.target.dataset.p;if(!p)return;S.profil[p]=e.target.value.slice(0,80);save()});
+addEventListener('hashchange',render);
+render();
+
+(async()=>{try{user=await use('user');db=await use('db')}catch(e){}
+if(!db||!user){return}try{uid=await user.id()}catch(e){}
+try{isInstr=!!(await user.canEdit())}catch(e){}
+let cw=null;try{cw=await user.can('data.write')}catch(e){}canWrite=!!uid&&cw!==false;
+if(uid){const timer=setTimeout(()=>setSync('Sinkron belum tersedia'),10000);try{const snap=await db.doc('progress/'+uid).get();clearTimeout(timer);if(snap.exists)merge(snap.data());setSync(canWrite?'Tersinkron':'Tersimpan di perangkat ini');save();if(canWrite)push()}catch(e){clearTimeout(timer);setSync('Tersimpan di perangkat ini')}}
+if(isInstr){unsub=db.collection('progress').onSnapshot(async s=>{rows=s.docs.map(d=>d.data()).filter(Boolean).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+try{const ids=rows.filter(r=>!r.profil?.nama).map(r=>r.uid);if(ids.length){const ps=await user.profiles(ids);for(const id of ids)profs[id]=ps?.[id]?.name||''}}catch(e){}
+if(location.hash==='#instruktur')render()},()=>{});}
+nav();if((location.hash.slice(1)||'beranda')==='beranda')render()})();
+}
+</script>
+</body>
+</html>
